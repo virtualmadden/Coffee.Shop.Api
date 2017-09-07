@@ -8,20 +8,12 @@ open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
-open Microsoft.Extensions.Logging
+
 
 type Startup private () =
-    new (env: IHostingEnvironment) as this =
+    new (configuration: IConfiguration) as this =
         Startup() then
-
-        let builder =
-            ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional = false, reloadOnChange = true)
-                .AddJsonFile((sprintf "appsettings.%s.json" (env.EnvironmentName)), optional = true)
-                .AddEnvironmentVariables()
-
-        this.Configuration <- builder.Build()
+        this.Configuration <- configuration
 
     // This method gets called by the runtime. Use this method to add services to the container.
     member this.ConfigureServices(services: IServiceCollection) =
@@ -29,23 +21,7 @@ type Startup private () =
         services.AddMvc() |> ignore
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    member this.Configure(app: IApplicationBuilder, env: IHostingEnvironment, loggerFactory: ILoggerFactory) =
+    member this.Configure(app: IApplicationBuilder, env: IHostingEnvironment) =
+        app.UseMvc() |> ignore
 
-        loggerFactory.AddConsole(this.Configuration.GetSection("Logging")) |> ignore
-        loggerFactory.AddDebug() |> ignore
-
-        if (env.IsDevelopment()) then
-            app.UseDeveloperExceptionPage() |> ignore
-            app.UseBrowserLink() |> ignore
-        else
-            app.UseExceptionHandler("/Home/Error") |> ignore
-
-        app.UseStaticFiles() |> ignore
-
-        app.UseMvc(fun routes ->
-            routes.MapRoute(
-                name = "default",
-                template = "{controller=Home}/{action=Index}/{id?}") |> ignore
-            ) |> ignore
-
-    member val Configuration : IConfigurationRoot = null with get, set
+    member val Configuration : IConfiguration = null with get, set

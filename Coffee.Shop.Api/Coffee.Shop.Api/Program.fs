@@ -14,10 +14,8 @@ module Program =
     let exitCode = 0
 
     let BuildWebHost args =
-        WebHostBuilder()
-            .UseKestrel()
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseIISIntegration()
+        WebHost
+            .CreateDefaultBuilder(args)
             .UseStartup<Startup>()
             .Build()
 
