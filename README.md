@@ -12,6 +12,12 @@ On Windows Powershell run:
 ./build
 ```
 
+## Build Status
+
+|Master|
+|:--:|
+|Comming soon!|
+
 ## Run
 
 ```powershell
