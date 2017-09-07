@@ -9,25 +9,30 @@ var configuration = Argument("configuration", "Release");
 // PREPARATION
 //////////////////////////////////////////////////////////////////////
 
-// Define directories.
-var buildDir = Directory("./Coffee.Shop.Api/Coffee.Shop.Api/bin");
+var projDir = Directory("./Coffee.Shop.Api/Coffee.Shop.Api/bin/netcoreapp2.0");
+var testDir = Directory("./Coffee.Shop.Api/UnitTests/Coffee.Shop.Api.Tests/bin/netcoreapp2.0");
+
 var solution = "./Coffee.Shop.Api/Coffee.Shop.Api.sln";
 
-var settings = new DotNetCoreBuildSettings {
-         Framework = "netcoreapp1.0",
-         Configuration = configuration,
-         OutputDirectory = buildDir
-     };
+var buildSettings = new DotNetCoreBuildSettings {
+        Framework = "netcoreapp2.0",
+        Configuration = configuration
+    };
+
+var testSettings = new DotNetCoreTestSettings {
+        Framework = "netcoreapp2.0",
+        Configuration = configuration
+    };
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
-
 Task("Clean")
     .Description("Cleaning the build directory.")
     .Does(() =>
 {
-    CleanDirectory(buildDir);
+    CleanDirectory(projDir);
+    CleanDirectory(testDir);
 });
 
 Task("Restore-NuGet-Packages")
@@ -43,7 +48,7 @@ Task("Build")
     .Description("Building the solution.")
     .Does(() =>
 {
-    DotNetCoreBuild(solution, settings);
+    DotNetCoreBuild(solution, buildSettings);
 });
 
 Task("Run-Unit-Tests")
@@ -51,9 +56,12 @@ Task("Run-Unit-Tests")
     .Description("Runs Unit tests.")
     .Does(() =>
 {
-    NUnit3("./Coffee.Shop.Api/**/bin/*.Tests.dll", new NUnit3Settings {
-        NoResults = true
-    });
+    var unitTests = GetFiles("./Coffee.Shop.Api/UnitTests/**/*.fsproj");
+
+    foreach(var test in unitTests)
+     {
+         DotNetCoreTest(test.FullPath, testSettings);
+     }
 });
 
 //////////////////////////////////////////////////////////////////////
