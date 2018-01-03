@@ -1,10 +1,6 @@
 ﻿namespace Coffee.Shop.Api.Controllers
 
 open Microsoft.AspNetCore.Mvc
-open System
-open System.Collections.Generic
-open System.Linq
-open System.Threading.Tasks
 open Coffee.Shop.Api.Models.Customers
 
 [<Route("[controller]")>]
@@ -15,7 +11,7 @@ type CustomerController() =
     member this.Get() = [| new Customer (Id = 3, First = "Jon", Last = "Doe") |]
     
     [<HttpGet("{id}")>]
-    member this.Get(id : int) = "value"
+    member this.Get(id : int) = new Customer (Id = 3, First = "Jon", Last = "Doe") 
     
     [<HttpPost>]
     member this.Post([<FromBody>] value : string) = ()

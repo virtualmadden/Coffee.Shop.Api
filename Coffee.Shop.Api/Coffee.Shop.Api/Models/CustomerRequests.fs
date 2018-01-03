@@ -1,7 +1,5 @@
 namespace Coffee.Shop.Api.Models
 
-open Coffee.Shop.Api.Models.Customers
-
 module CustomerRequests = 
     type AddCustomerRequest = {
         First : string
